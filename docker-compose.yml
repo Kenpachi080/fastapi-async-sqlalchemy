@@ -1,0 +1,36 @@
+version: '3.7'
+
+services:
+
+  postgres:
+    image: postgres:13.3
+    environment:
+      POSTGRES_DB: "todo"
+      POSTGRES_USER: "todo"
+      POSTGRES_PASSWORD: "todo"
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql
+
+
+  python_app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=todo
+      - DB_PASSWORD=todo
+      - DB_NAME=todo
+    restart: on-failure
+    command: "sh server.sh"
+    depends_on:
+      - postgresql
+
+volumes:
+  pg_data:
+
